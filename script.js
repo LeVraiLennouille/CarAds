@@ -2,17 +2,59 @@ let currentFuel = 'diesel';
 let currentFormat = 'square';
 let currentFont = 'sport';
 let currentCritair = 'none';
-let currentOverlay = null;
 let cropperInstance = null;
 let rawVehicleImageSrc = null;
-let qrInstance = null;
 
-const FUELS = {
-  diesel:{label:'Diesel',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V6a2 2 0 012-2h8a2 2 0 012 2v16M3 22h14M7 22V12h4v10"/><path d="M17 4h1a2 2 0 012 2v3.5a1.5 1.5 0 003 0V7l-2-3"/></svg>'},
-  essence:{label:'Essence',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V6a2 2 0 012-2h8a2 2 0 012 2v16M3 22h14M7 22V12h4v10"/><path d="M17 4h1a2 2 0 012 2v3.5a1.5 1.5 0 003 0V7l-2-3"/></svg>'},
-  hybride:{label:'Hybride',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>'},
-  electrique:{label:'Électrique',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>'},
+const SV = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const PUMP = '<path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M3 21h13M7.5 8h4"/><path d="M15 9.5h2a2 2 0 0 1 2 2V16a1.5 1.5 0 0 0 3 0V9l-3-3"/>';
+const DROP = '<path d="M12 3s6 6.3 6 11a6 6 0 0 1-12 0c0-4.7 6-11 6-11z"/>';
+const FUEL_PATHS = {
+  diesel: PUMP,
+  essence: DROP,
+  hybride: DROP + '<path d="M12.8 10 10.2 14h3.6l-.8 3.5"/>',
+  electrique: '<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0V7zM12 17v5"/>',
 };
+const FUELS = {
+  diesel:{label:'Diesel',svg:SV(FUEL_PATHS.diesel)},
+  essence:{label:'Essence',svg:SV(FUEL_PATHS.essence)},
+  hybride:{label:'Hybride',svg:SV(FUEL_PATHS.hybride)},
+  electrique:{label:'Électrique',svg:SV(FUEL_PATHS.electrique)},
+};
+
+// Palette Citroën : rouge Infra-Red, bleu Monte Carlo (concessions) et neutres
+const PALETTE = [
+  {name:'Rouge Infra-Red',  hex:'#ee3524'},
+  {name:'Bleu Monte Carlo', hex:'#1b3f8b'},
+  {name:'Bleu nuit',        hex:'#0f2a5c'},
+  {name:'Bleu glacier',     hex:'#2f80b7'},
+  {name:'Jaune 1919',       hex:'#c48a00'},
+  {name:'Vert kaki',        hex:'#4f6b3f'},
+];
+const COLOR_IDS = ['cYear','cBadge','cStats','cOptions','cFooter','cFin'];
+
+function renderPalette() {
+  document.querySelectorAll('.presets').forEach(p => {
+    const id = p.querySelector('.preset').getAttribute('onclick').match(/setColor\('(\w+)'/)[1];
+    p.innerHTML = PALETTE.map(c => `<div class="preset" title="${c.name}" data-target="${id}" data-hex="${c.hex}" style="background:${c.hex}" onclick="setColor('${id}','${c.hex}')"></div>`).join('');
+  });
+}
+
+function initFuelIcons() {
+  document.querySelectorAll('.fuel-pill').forEach(p => { p.querySelector('svg').innerHTML = FUEL_PATHS[p.dataset.fuel]; });
+}
+
+function fitRibbon(text) {
+  const el = document.getElementById('cBadgeInner');
+  el.innerHTML = '';
+  const s = document.createElement('span');
+  s.style.whiteSpace = 'nowrap';
+  s.textContent = text;
+  el.appendChild(s);
+  el.style.fontSize = '';
+  const limit = ({square:150, story:140, landscape:125})[currentFormat] || 140;
+  let size = parseFloat(getComputedStyle(el).fontSize);
+  while (s.offsetWidth > limit && size > 11) { size -= 1; el.style.fontSize = size + 'px'; }
+}
 
 const FONTS = {
   sport:   { heading:"'Barlow Condensed',sans-serif", body:"'Barlow',sans-serif" },
@@ -27,10 +69,29 @@ const FORMATS = {
   landscape: { label:'800 × 450 px (Paysage 16:9)', w:800, h:450 },
 };
 
-const CRITAIR_COLORS = { none:'', E:'#4caf50','1':'#8e44ad','2':'#c9a800','3':'#e67e22','4':'#c0392b','5':'#7f8c8d' };
+const CRITAIR_COLORS = { none:'', E:'#1e9e4a','1':'#7b3f9e','2':'#e0b400','3':'#e67e22','4':'#8e2430','5':'#6b7580' };
+const GARANTIE_COLORS = { 'Garantie 12 mois':'#1b3f8b','Garantie 24 mois':'#0f2a5c','Première main':'#ee3524','Entretien à jour':'#4f6b3f','Certifié constructeur':'#2f80b7' };
 const DEFAULTS = ['Limiteur et régulateur','Ordinateur de bord','Kit mains libres Bluetooth','Caméra de recul'];
 
+function toggleTheme() {
+  const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('acs_theme', t); } catch(e){}
+}
+
+function initAccordion() {
+  const secs = document.querySelectorAll('.panel .sec');
+  secs.forEach((s, i) => {
+    if (i === secs.length - 1) return;
+    s.querySelector('.sec-title').addEventListener('click', () => s.classList.toggle('closed'));
+    s.classList.add('closed');
+  });
+}
+
 function init() {
+  renderPalette();
+  initFuelIcons();
+  initAccordion();
   loadLogo();
   loadSettings();
   DEFAULTS.forEach(o => addOption(o));
@@ -48,6 +109,7 @@ const PERSIST_IDS = ['dealer','phone','address','cYear','cBadge','cStats','cOpti
 function saveSettings() {
   const s = {};
   PERSIST_IDS.forEach(k => { const el = document.getElementById(k); if(el) s[k] = el.value; });
+  s.pal = 5;
   s.fuel = currentFuel;
   s.font = currentFont;
   s.format = currentFormat;
@@ -61,7 +123,7 @@ function loadSettings() {
   try {
     const s = JSON.parse(localStorage.getItem('acs_settings_v2') || 'null');
     if (!s) return;
-    PERSIST_IDS.forEach(k => { const el = document.getElementById(k); if(el && s[k] !== undefined) el.value = s[k]; });
+    PERSIST_IDS.forEach(k => { if (s.pal !== 5 && COLOR_IDS.includes(k)) return; const el = document.getElementById(k); if(el && s[k] !== undefined) el.value = s[k]; });
     if (s.fuel) currentFuel = s.fuel;
     if (s.font) currentFont = s.font;
     if (s.format) currentFormat = s.format;
@@ -76,7 +138,8 @@ function selectFormat(f, save=true) {
   currentFormat = f;
   document.querySelectorAll('.format-pill').forEach(p => p.classList.toggle('active', p.dataset.format === f));
   const card = document.getElementById('card');
-  card.className = f === 'square' ? '' : f;
+  card.classList.remove('story','landscape'); if (f !== 'square') card.classList.add(f);
+  fitRibbon(document.getElementById('badge').value);
   card.style.width = FORMATS[f].w + 'px';
   card.style.height = FORMATS[f].h + 'px';
   document.getElementById('previewFormatLabel').textContent = FORMATS[f].label;
@@ -110,31 +173,9 @@ function selectCritair(c, save=true) {
   } else {
     badge.style.display = 'flex';
     badge.style.background = CRITAIR_COLORS[c];
-    badge.textContent = c === 'E' ? '⚡' : c;
+    badge.innerHTML = `<span class="ca-lbl">Crit'Air</span><span class="ca-num">${c}</span>`;
   }
   if (save) saveSettings();
-}
-
-const OVERLAY_DATA = {
-  vendu:        { text:'VENDU' },
-  nouveau_prix:{ text:'NOUVEAU PRIX' },
-  arrivage:    { text:'ARRIVAGE' },
-  promo:        { text:'PROMO' },
-};
-
-function setOverlay(type) {
-  const overlay = document.getElementById('cStatusOverlay');
-  if (currentOverlay === type) {
-    currentOverlay = null;
-    overlay.style.display = 'none';
-    document.querySelectorAll('.overlay-btn').forEach(b => b.classList.remove('active'));
-    return;
-  }
-  currentOverlay = type;
-  document.querySelectorAll('.overlay-btn').forEach(b => b.classList.toggle('active', b.dataset.overlay === type));
-  overlay.style.display = '';
-  overlay.className = 'status-overlay overlay-' + type;
-  document.getElementById('cStatusText').textContent = OVERLAY_DATA[type].text;
 }
 
 document.getElementById('logoInput').addEventListener('change', function(e) {
@@ -147,7 +188,6 @@ document.getElementById('logoInput').addEventListener('change', function(e) {
 function applyLogo(src) {
   const img = document.getElementById('cLogoImg');
   img.src = src; img.style.display = 'block';
-  document.getElementById('cLogoDefault').style.display = 'none';
   document.getElementById('logoPreviewImg').src = src;
   document.getElementById('logoPreview').classList.add('on');
 }
@@ -158,7 +198,6 @@ function saveLogo(src) {
 
 function clearLogo() {
   document.getElementById('cLogoImg').style.display = 'none';
-  document.getElementById('cLogoDefault').style.display = 'flex';
   document.getElementById('logoPreview').classList.remove('on');
   document.getElementById('logoInput').value = '';
   try { localStorage.removeItem('acs_logo'); } catch(e){}
@@ -176,7 +215,7 @@ function showSaved() {
 
 function setupDrop(zoneId, cb) {
   const z = document.getElementById(zoneId);
-  z.addEventListener('dragover', e => { e.preventDefault(); z.style.borderColor='#ff0000'; });
+  z.addEventListener('dragover', e => { e.preventDefault(); z.style.borderColor='var(--accent)'; });
   z.addEventListener('dragleave', () => { z.style.borderColor=''; });
   z.addEventListener('drop', e => {
     e.preventDefault(); z.style.borderColor='';
@@ -200,6 +239,7 @@ function applyVehicleImage(src) {
   document.getElementById('cardImg').src = src;
   document.getElementById('cardImg').style.display = 'block';
   document.getElementById('cImgPlaceholder').style.display = 'none';
+  document.getElementById('cImgSection').classList.add('has-img');
 }
 
 function openCropModal() {
@@ -233,17 +273,11 @@ function applyCrop() {
   closeCropModal();
 }
 
-function updateQRCode() {
-  const url = document.getElementById('annonceUrl').value.trim();
-  const wrap = document.getElementById('cQRWrap');
-  const qrDiv = document.getElementById('cQRCode');
-  qrDiv.innerHTML = '';
-  if (qrInstance) { try { qrInstance.clear(); } catch(e){} qrInstance = null; }
-  if (!url) { wrap.style.display = 'none'; return; }
-  try {
-    qrInstance = new QRCode(qrDiv, { text: url, width: 56, height: 56, colorDark:'#000', colorLight:'#fff', correctLevel: QRCode.CorrectLevel.M });
-    wrap.style.display = 'block';
-  } catch(e) { wrap.style.display = 'none'; }
+function setRibbon(text, color) {
+  g('badge').value = text;
+  g('cBadge').value = color;
+  g('showBadge').checked = true;
+  updateCard(); saveSettings();
 }
 
 function addOption(val='') {
@@ -273,20 +307,20 @@ const v = id => g(id).value;
 
 function updateCard() {
   g('cBrand').textContent   = v('brand');
-  g('cYear').textContent    = v('year');
-  g('cYear').style.color    = v('cYear');
+  g('cYearChip').textContent = v('year');
+  g('cYearChip').style.background = v('cYear');
   g('cPrice').textContent   = v('price');
   g('cPower').textContent   = v('power');
   g('cMileage').textContent = v('mileage');
   g('cTx').innerHTML        = v('transmission').replace(/\n/g,'<br>');
   g('cTxWrap').style.background = v('cStats');
-  g('cBadgeInner').textContent  = v('badge');
   g('cBadgeInner').style.background = v('cBadge');
   g('cBadgeWrap').style.display = g('showBadge').checked ? '' : 'none';
+  fitRibbon(v('badge'));
   g('cDealer').textContent  = v('dealer');
   g('cPhone').textContent   = v('phone');
   g('cAddress').textContent = v('address');
-  g('cFooter').style.background = v('cFooter');
+  g('cFooterBar').style.background = v('cFooter');
 
   const showFin = g('showFin').checked;
   g('cFinancement').style.display = showFin ? 'flex' : 'none';
@@ -310,20 +344,9 @@ function updateCard() {
   else if (garantieSel) garantieText = garantieSel;
   garantieEl.style.display = garantieText ? 'block' : 'none';
   garantieEl.textContent = garantieText;
+  garantieEl.style.background = garantieSel === 'custom' ? v('garantieColor') : (GARANTIE_COLORS[garantieSel] || '#1b3f8b');
 
-  const dark = g('darkCard').checked;
-  g('card').style.background    = dark ? '#1a1a22' : '#fff';
-  g('cHeader').style.background = dark ? '#0f0f13' : '#f2f2f2';
-  g('cHeader').style.borderColor= dark ? '#333' : '#ddd';
-  g('cOptsSection').style.background = dark ? '#1a1a22' : '#fff';
-  g('cBrand').style.color       = dark ? '#fff' : '#111';
-  document.querySelectorAll('.stat').forEach(s => {
-    s.style.background  = dark ? '#1a1a22' : '#f9f9f9';
-    s.style.borderColor = dark ? '#333' : '#ddd';
-    const sv = s.querySelector('.stat-val');
-    if(sv) sv.style.color = dark ? '#fff' : '#111';
-  });
-  document.querySelectorAll('.opt-item').forEach(o => o.style.color = dark ? '#ddd' : '#333');
+  g('card').classList.toggle('dark', g('darkCard').checked);
 
   const inputs = document.querySelectorAll('#optionsList .option-row input[type="text"]');
   const grid = g('cOptsGrid');
@@ -336,6 +359,7 @@ function updateCard() {
     item.innerHTML = `<span class="opt-check" style="background:${c}"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>${inp.value}</span>`;
     grid.appendChild(item);
   });
+  document.querySelectorAll('.preset').forEach(p => p.classList.toggle('active', (g(p.dataset.target).value || '').toLowerCase() === p.dataset.hex));
   const addBtn = document.querySelector('.btn-add');
   if(addBtn) addBtn.style.display = inputs.length >= 4 ? 'none' : 'flex';
 }
@@ -390,6 +414,8 @@ async function downloadCard(type='jpg') {
   card.style.marginBottom = '';
 
   document.querySelectorAll('.sort-handle').forEach(h => h.style.display = 'none');
+  const svgs = card.querySelectorAll('svg');
+  svgs.forEach(s => { s.style.color = getComputedStyle(s).color; });
 
   try {
     const canvas = await html2canvas(card, {
@@ -408,6 +434,7 @@ async function downloadCard(type='jpg') {
   } catch(e) { alert('Erreur lors de la génération.'); console.error(e); }
 
   document.querySelectorAll('.sort-handle').forEach(h => h.style.display = '');
+  card.querySelectorAll('svg').forEach(s => s.style.removeProperty('color'));
   card.style.transform = savedTransform;
   card.style.marginBottom = savedMargin;
   btn.disabled = false;
@@ -415,3 +442,4 @@ async function downloadCard(type='jpg') {
 }
 
 init();
+if (document.fonts) document.fonts.ready.then(updateCard);
