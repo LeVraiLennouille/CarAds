@@ -165,6 +165,7 @@ function init() {
   initSortable();
   scaleCardToFit();
   initPlate();
+  initResponsive();
 }
 
 const PERSIST_IDS = ['dealer','phone','address','cYear','cBadge','cStats','cOptions','cFooter','cFin'];
@@ -632,30 +633,37 @@ function initPlate() {
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => layoutPlate()).observe(wrap);
 }
 
+// ===== Responsive : la carte est toujours mise à l'échelle pour tenir ENTIÈREMENT dans l'aperçu =====
 function scaleCardToFit() {
   const fmt = FORMATS[currentFormat];
-  const area = document.getElementById('previewArea');
-  const isMobile = window.innerWidth <= 820;
-  if (!isMobile) {
-    document.getElementById('card').style.transform = '';
-    document.getElementById('card').style.marginBottom = '';
-    return;
-  }
-  const availW = area.clientWidth - 24;
-  const availH = window.innerHeight * 0.65;
+  const area = g('previewArea'), card = g('card'), meta = g('previewMeta');
+  const cs = getComputedStyle(area);
+  const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+  const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+  const gap = parseFloat(cs.rowGap) || 0;
+  const metaH = meta.offsetHeight ? meta.offsetHeight + gap : 0;   // 0 quand la barre d'info est masquée
+  const availW = area.clientWidth - padX - 2;
+  const availH = area.clientHeight - padY - metaH - 2;
+  if (availW <= 0 || availH <= 0) return;
   const scale = Math.min(availW / fmt.w, availH / fmt.h, 1);
-  const card = document.getElementById('card');
-  card.style.transform = `scale(${scale})`;
-  card.style.marginBottom = `-${fmt.h * (1 - scale)}px`;
+  card.style.transform = scale < 1 ? `scale(${scale})` : '';
+  card.style.marginBottom = scale < 1 ? `-${fmt.h * (1 - scale)}px` : '';
+  // Permet aux poignées tactiles (CSS) de garder une taille constante à l'écran quelle que soit l'échelle
+  card.style.setProperty('--inv', (1 / scale).toFixed(3));
 }
 
-window.addEventListener('resize', scaleCardToFit);
+function initResponsive() {
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => scaleCardToFit()).observe(g('previewArea'));
+  window.addEventListener('resize', scaleCardToFit);
+  window.addEventListener('orientationchange', () => setTimeout(scaleCardToFit, 150));
+}
 
+// Téléphone / tablette portrait : bascule entre "édition + aperçu" et "aperçu agrandi"
 function togglePanel() {
-  const panel = document.getElementById('panel');
-  const backdrop = document.getElementById('panelBackdrop');
-  panel.classList.toggle('open');
-  backdrop.classList.toggle('on');
+  const on = document.body.classList.toggle('preview-only');
+  const btn = g('mobileMenuBtn');
+  btn.setAttribute('aria-pressed', on);
+  btn.querySelector('.lbl').textContent = on ? 'Édition' : 'Aperçu';
 }
 
 async function downloadCard() {
@@ -685,6 +693,10 @@ async function downloadCard() {
       logging: false,
       width: card.offsetWidth,
       height: card.offsetHeight,
+      onclone: doc => {   // la zone d'aperçu ne doit jamais rogner la carte à taille réelle
+        const area = doc.getElementById('previewArea');
+        if (area) area.style.overflow = 'visible';
+      },
     });
     if (canvas.width !== outW || canvas.height !== outH) { // arrondis flottants du scale
       const fixed = document.createElement('canvas');
