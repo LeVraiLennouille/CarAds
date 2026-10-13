@@ -7,13 +7,13 @@ let rawVehicleImageSrc = null;
 
 const g = id => document.getElementById(id);
 const v = id => g(id).value;
-// Texte saisi ; à défaut, le texte d'exemple (placeholder) pour garder un aperçu lisible
+
 const txt = id => v(id).trim() || g(id).placeholder || '';
 
 const NF = new Intl.NumberFormat('fr-FR');
 const NUM_ONLY = /^[\d\s.,]+(?:€|eur(?:os?)?)?$/i;
 const DECIMAL_END = /[.,]\d{1,2}(?:\s*(?:€|eur(?:os?)?))?$/i;
-// "33490", "33.490" ou "33 490 €" -> "33 490" (+ suffixe). Texte libre ("À partir de…") laissé tel quel.
+
 function numField(id, suffix = '') {
   const raw = v(id).trim();
   if (!raw) return g(id).placeholder || '';
@@ -26,7 +26,7 @@ function numField(id, suffix = '') {
 function fmtNum(n) {
   return NF.format(n).replace(/[\u202f\u00a0]/g, '\u00a0');
 }
-// Premier montant d'un texte ("26 490 € TTC" -> 26490), centimes ignorés ; null si aucun chiffre
+
 function amountOf(raw) {
   const m = (raw || '').match(/\d[\d\s\u00a0\u202f.,]*/);
   if (!m) return null;
@@ -34,7 +34,6 @@ function amountOf(raw) {
   return digits ? Number(digits) : null;
 }
 
-// Texte multi-lignes sans innerHTML (pas d'injection)
 function setMultiline(el, text) {
   el.textContent = '';
   text.split(/\r?\n/).forEach((line, i) => {
@@ -43,7 +42,6 @@ function setMultiline(el, text) {
   });
 }
 
-// Bascule l'état actif + aria-pressed sur un groupe de boutons
 function setPressed(selector, isOn) {
   document.querySelectorAll(selector).forEach(n => {
     const on = isOn(n);
@@ -52,8 +50,8 @@ function setPressed(selector, isOn) {
   });
 }
 
-const LOGO_MAX = 400;    // px, plus grande dimension
-const PHOTO_MAX = 2000;  // px, plus grande dimension
+const LOGO_MAX = 400;
+const PHOTO_MAX = 2000;
 
 const SV = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const PUMP = '<path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M3 21h13M7.5 8h4"/><path d="M15 9.5h2a2 2 0 0 1 2 2V16a1.5 1.5 0 0 0 3 0V9l-3-3"/>';
@@ -71,7 +69,6 @@ const FUELS = {
   electrique:{label:'Électrique',svg:SV(FUEL_PATHS.electrique)},
 };
 
-// Palette Citroën : rouge Infra-Red, bleu Monte Carlo (concessions) et neutres
 const PALETTE = [
   {name:'Rouge Infra-Red',  hex:'#ee3524'},
   {name:'Bleu Monte Carlo', hex:'#1b3f8b'},
@@ -169,7 +166,7 @@ function init() {
 }
 
 const PERSIST_IDS = ['dealer','phone','address','cYear','cBadge','cStats','cOptions','cFooter','cFin'];
-// Anciens textes factices qui ont pu être enregistrés comme vraies valeurs
+
 const LEGACY_SAMPLES = ['Nom du garage', '03 XX XX XX XX', 'Adresse de la concessionnaire'];
 
 function saveSettings() {
@@ -264,7 +261,7 @@ function loadImage(src) {
     img.src = src;
   });
 }
-// Réduit l'image pour que sa plus grande dimension ne dépasse pas maxSize (les SVG restent intacts)
+
 async function prepareImage(file, { maxSize, type }) {
   const src = await readFile(file);
   if (file.type === 'image/svg+xml') return src;
@@ -397,7 +394,6 @@ function setRibbon(text, color) {
   updateCard(); saveSettings();
 }
 
-// sample : texte d'exemple affiché en grisé et utilisé dans l'aperçu tant que la ligne est vide
 function addOption(val = '', sample = '') {
   const list = document.getElementById('optionsList');
   if (list.querySelectorAll('.option-row').length >= 4) return;
@@ -441,7 +437,6 @@ function updateCard() {
   g('cMileage').textContent = numField('mileage');
   setMultiline(g('cTx'), txt('transmission'));
 
-  // Prix barré (à la place du libellé "Prix") + badge "Économisez …"
   const oldRaw = v('oldPrice').trim();
   const priceLbl = g('cPriceLbl');
   priceLbl.textContent = '';
@@ -532,10 +527,6 @@ function initSortable() {
   });
 }
 
-// ===== Masquage de la plaque d'immatriculation =====
-// Le rectangle est stocké en fractions de la photo SOURCE (pas de la carte) : il reste collé à la plaque
-// quand le format change, qu'un bloc est ajouté/déplacé ou que l'image est recadrée par object-fit.
-// Le flou/pixelisation est dessiné dans un <canvas> (backdrop-filter n'est pas exporté par html2canvas).
 const PLATE_DEFAULT = { x: 0.40, y: 0.66, w: 0.20, h: 0.06 };
 const plateRect = { ...PLATE_DEFAULT };
 const plateMid = document.createElement('canvas');
@@ -550,7 +541,6 @@ function syncPlateControls() {
   g('plateColorRow').style.display = (on && v('plateStyle') === 'solid') ? 'flex' : 'none';
 }
 
-// Correspondance photo -> zone d'image affichée (object-fit: cover)
 function coverGeometry() {
   const wrap = g('cImgSection'), img = g('cardImg');
   const W = wrap.clientWidth, H = wrap.clientHeight, nw = img.naturalWidth, nh = img.naturalHeight;
@@ -582,7 +572,7 @@ function paintPlate(img, el, boxW, boxH) {
   const nw = img.naturalWidth, nh = img.naturalHeight;
   const sx = plateRect.x * nw, sy = plateRect.y * nh;
   const sw = Math.max(1, plateRect.w * nw), sh = Math.max(1, plateRect.h * nh);
-  // Zone réduite à ~4 lignes de pixels : illisible quelle que soit la taille du rectangle
+
   const rows = 4, cols = Math.max(4, Math.round(rows * sw / sh));
   const midW = Math.max(cols, Math.min(Math.round(sw), cols * 6));
   const midH = Math.max(rows, Math.min(Math.round(sh), rows * 6));
@@ -597,7 +587,7 @@ function paintPlate(img, el, boxW, boxH) {
   const outW = Math.max(2, Math.round(boxW * 2)), outH = Math.max(2, Math.round(boxH * 2));
   cv.width = outW; cv.height = outH;
   const c = cv.getContext('2d');
-  c.imageSmoothingEnabled = (style === 'blur');   // flou = agrandissement lissé ; pixels = agrandissement brut
+  c.imageSmoothingEnabled = (style === 'blur');
   c.drawImage(plateTiny, 0, 0, outW, outH);
 }
 
@@ -607,7 +597,7 @@ function initPlate() {
 
   el.addEventListener('pointerdown', e => {
     const geo = coverGeometry(); if (!geo) return;
-    const zoom = wrap.getBoundingClientRect().width / wrap.clientWidth || 1;   // aperçu réduit sur mobile
+    const zoom = wrap.getBoundingClientRect().width / wrap.clientWidth || 1;
     mode = (e.target === handle) ? 'resize' : 'move';
     start = { x: e.clientX, y: e.clientY, p: { ...plateRect }, kx: geo.nw * geo.s * zoom, ky: geo.nh * geo.s * zoom };
     el.setPointerCapture(e.pointerId);
@@ -633,7 +623,6 @@ function initPlate() {
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => layoutPlate()).observe(wrap);
 }
 
-// ===== Responsive : la carte est toujours mise à l'échelle pour tenir ENTIÈREMENT dans l'aperçu =====
 function scaleCardToFit() {
   const fmt = FORMATS[currentFormat];
   const area = g('previewArea'), card = g('card'), meta = g('previewMeta');
@@ -641,14 +630,14 @@ function scaleCardToFit() {
   const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
   const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
   const gap = parseFloat(cs.rowGap) || 0;
-  const metaH = meta.offsetHeight ? meta.offsetHeight + gap : 0;   // 0 quand la barre d'info est masquée
+  const metaH = meta.offsetHeight ? meta.offsetHeight + gap : 0;
   const availW = area.clientWidth - padX - 2;
   const availH = area.clientHeight - padY - metaH - 2;
   if (availW <= 0 || availH <= 0) return;
   const scale = Math.min(availW / fmt.w, availH / fmt.h, 1);
   card.style.transform = scale < 1 ? `scale(${scale})` : '';
   card.style.marginBottom = scale < 1 ? `-${fmt.h * (1 - scale)}px` : '';
-  // Permet aux poignées tactiles (CSS) de garder une taille constante à l'écran quelle que soit l'échelle
+
   card.style.setProperty('--inv', (1 / scale).toFixed(3));
 }
 
@@ -658,7 +647,6 @@ function initResponsive() {
   window.addEventListener('orientationchange', () => setTimeout(scaleCardToFit, 150));
 }
 
-// Téléphone / tablette portrait : bascule entre "édition + aperçu" et "aperçu agrandi"
 function togglePanel() {
   const on = document.body.classList.toggle('preview-only');
   const btn = g('mobileMenuBtn');
@@ -684,7 +672,7 @@ async function downloadCard() {
   svgs.forEach(s => { s.style.color = getComputedStyle(s).color; });
 
   try {
-    // Résolution cible : 1080×1080 (carré), 1080×1920 (story), 1920×1080 (paysage)
+
     const outW = FORMATS[currentFormat].exportW;
     const outH = Math.round(card.offsetHeight * outW / card.offsetWidth);
     let canvas = await html2canvas(card, {
@@ -693,12 +681,12 @@ async function downloadCard() {
       logging: false,
       width: card.offsetWidth,
       height: card.offsetHeight,
-      onclone: doc => {   // la zone d'aperçu ne doit jamais rogner la carte à taille réelle
+      onclone: doc => {
         const area = doc.getElementById('previewArea');
         if (area) area.style.overflow = 'visible';
       },
     });
-    if (canvas.width !== outW || canvas.height !== outH) { // arrondis flottants du scale
+    if (canvas.width !== outW || canvas.height !== outH) {
       const fixed = document.createElement('canvas');
       fixed.width = outW; fixed.height = outH;
       fixed.getContext('2d').drawImage(canvas, 0, 0, outW, outH);

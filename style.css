@@ -144,7 +144,6 @@ input[type="color"]{width:30px;height:24px;border:1px solid var(--border);border
 .critair-badge{position:absolute;bottom:10px;left:12px;width:42px;height:42px;border-radius:50%;display:none;align-items:center;justify-content:center;font-family:var(--card-heading-font);font-size:18px;font-weight:900;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.4)}
 .co2-badge{position:absolute;bottom:10px;left:62px;background:rgba(0,0,0,.75);color:#fff;font-family:var(--card-body-font);font-size:11px;font-weight:600;padding:5px 9px;border-radius:20px;display:none;align-items:center;gap:4px;white-space:nowrap;backdrop-filter:blur(4px)}
 
-
 .card-financement{padding:10px 18px;display:none;align-items:center;justify-content:space-between;flex-shrink:0}
 .fin-main{font-family:var(--card-heading-font);font-size:24px;font-weight:900;color:#fff}
 .fin-legal{font-family:var(--card-body-font);font-size:10px;color:rgba(255,255,255,.75);max-width:380px;line-height:1.3}
@@ -206,7 +205,6 @@ input[type="color"]{width:30px;height:24px;border:1px solid var(--border);border
 .section-divider{height:1px;background:var(--border);margin:2px 0}
 .subtext{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
 
-/* ===== Refonte : interface ===== */
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 body,.panel,.preview-area{transition:background .25s,color .25s}
 header{padding:12px 20px;gap:12px}
@@ -243,7 +241,6 @@ input[type="text"]:focus,textarea:focus,select:focus{box-shadow:0 0 0 3px color-
 .preview-meta{border-radius:999px;padding:7px 16px;background:var(--surface)}
 .modal-header h3,.modal-footer .btn-apply{font-family:'Manrope',sans-serif;letter-spacing:0;text-transform:none}
 
-/* ===== Refonte : affiche ===== */
 #card{--c-bg:#fff;--c-surf:#f2f4f7;--c-text:#161b24;--c-mute:#667085;--c-line:#e1e5eb;background:var(--c-bg);box-shadow:0 24px 70px rgba(16,18,22,.28)}
 #card.dark{--c-bg:#161b24;--c-surf:#202836;--c-text:#fff;--c-mute:#9aa6b8;--c-line:#2c3545}
 .card-header{background:var(--c-bg);border-bottom:1px solid var(--c-line);padding:16px 24px;gap:16px}
@@ -285,8 +282,6 @@ input[type="text"]:focus,textarea:focus,select:focus{box-shadow:0 0 0 3px color-
 #card.landscape .footer-phone{font-size:18px}
 .sort-handle{color:var(--c-mute)}
 
-
-/* ===== Corrections ===== */
 html,body{height:100%}
 body{height:100vh;height:100dvh;min-height:0;overflow:hidden}
 .workspace{min-height:0}
@@ -317,17 +312,15 @@ input[type="color"]::-moz-color-swatch{border:none;border-radius:5px}
 .stat-ico svg{stroke-width:1.7}
 .stat-tx svg{width:26px;height:26px}
 #card.landscape .stat-ico{width:30px;height:30px;padding:5px}
-/* ===== Boutons accessibles (pills, pastilles Crit'Air, palette) ===== */
+
 button.pill,button.critair-swatch,button.preset{appearance:none;-webkit-appearance:none}
 button.pill{font-family:inherit}
 button.preset{display:block}
 .saved-badge.err{color:#e5484d}
 .saved-badge.err svg{display:none}
 
-/* ===== Sections masquées temporairement : retirer la classe "temp-hidden" dans index.html pour les réafficher ===== */
 .sec.temp-hidden{display:none!important}
 
-/* ===== Format Portrait 4:5 (640×800 -> export 1080×1350) ===== */
 #card.portrait{width:640px;height:800px}
 #card.portrait .card-header{padding:14px 20px}
 #card.portrait .card-brand{font-size:30px}
@@ -343,28 +336,18 @@ button.preset{display:block}
 #card.portrait .card-footer{padding:12px 20px}
 #card.portrait .footer-phone{font-size:22px}
 
-/* ===== Prix barré + badge d'économie ===== */
 .stat-lbl s{font-size:13px;font-weight:600;text-decoration-thickness:2px}
 .saving-badge{position:absolute;bottom:14px;right:16px;z-index:2;display:none;background:#1e9e4a;color:#fff;font-family:var(--card-heading-font);font-weight:800;font-size:19px;letter-spacing:.03em;text-transform:uppercase;padding:7px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(0,0,0,.35);white-space:nowrap}
 #card.portrait .saving-badge{font-size:17px}
 #card.story .saving-badge{font-size:15px;padding:5px 11px;bottom:12px;right:12px}
 #card.landscape .saving-badge{font-size:15px;padding:5px 11px;bottom:10px;right:12px}
 
-/* ===== Masquage de plaque ===== */
 .plate{position:absolute;display:none;cursor:move;touch-action:none;box-sizing:border-box}
 .plate canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #card:not(.exporting) .plate{outline:2px dashed rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,0,0,.45)}
 .plate-handle{position:absolute;right:-8px;bottom:-8px;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--accent);cursor:nwse-resize;touch-action:none;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 #card.exporting .plate-handle{display:none}
 
-
-/* =====================================================================
-   RESPONSIVE : téléphone, tablette, desktop
-   - >1100px              : panneau + aperçu côte à côte
-   - <=1100px en paysage  : idem, panneau plus étroit
-   - <=1100px en portrait : aperçu en haut, panneau d'édition dessous (les deux restent visibles)
-   La carte est mise à l'échelle par scaleCardToFit() pour toujours tenir dans l'aperçu.
-   ===================================================================== */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
 button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
@@ -378,7 +361,6 @@ button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
 .plate-handle{width:calc(18px*var(--inv,1));height:calc(18px*var(--inv,1));right:calc(-9px*var(--inv,1));bottom:calc(-9px*var(--inv,1));border-width:calc(2px*var(--inv,1))}
 #card:not(.exporting) .plate{outline-width:calc(2px*var(--inv,1))}
 
-/* Tablette paysage / petit desktop */
 @media (max-width:1100px){
   html{--panel-w:320px}
   .preview-area{padding:18px 16px 22px;gap:12px}
@@ -387,7 +369,6 @@ button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
   html{--panel-w:280px}
 }
 
-/* Écrans bas (téléphone en paysage) */
 @media (orientation:landscape) and (max-height:520px){
   header{padding:6px 14px;gap:8px}
   .h-icon{width:28px;height:28px;padding:6px}
@@ -398,14 +379,13 @@ button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
   .sec-title{padding:10px 0 4px}
 }
 
-/* Téléphone + tablette en portrait : aperçu en haut, édition dessous */
 @media (orientation:portrait) and (max-width:1100px){
   .workspace{flex-direction:column}
   .preview-area{order:1;flex:0 0 auto;width:100%;height:clamp(240px,46vh,640px);height:clamp(240px,46dvh,640px);padding:10px 12px 8px;gap:8px;justify-content:center;justify-content:safe center;border-bottom:1px solid var(--border)}
   .panel{order:2;flex:1 1 0;width:100%;min-width:0;border-right:none;padding:2px 16px 0}
   .mobile-menu-btn{display:flex}
   .preview-meta{font-size:11px;padding:5px 12px}
-  /* Aperçu agrandi : on ne garde que le bouton d'export sous la carte */
+
   body.preview-only .preview-area{flex:1 1 auto;height:auto}
   body.preview-only .panel{flex:0 0 auto;overflow:visible}
   body.preview-only .panel .sec:not(:last-child){display:none}
@@ -416,7 +396,6 @@ button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
   .preview-meta .hint{display:none}
 }
 
-/* Écrans tactiles : cibles >= 40px, champs à 16px (évite le zoom automatique d'iOS au focus) */
 @media (pointer:coarse){
   input[type="text"],textarea,select{font-size:16px}
   .pill{min-height:40px;padding:8px 14px}
@@ -437,12 +416,10 @@ button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
   .plate-handle{width:calc(30px*var(--inv,1));height:calc(30px*var(--inv,1));right:calc(-15px*var(--inv,1));bottom:calc(-15px*var(--inv,1))}
 }
 
-/* Sans survol (tactile) : poignées de réorganisation toujours visibles, taille constante à l'écran */
 @media (hover:none){
   #card .sort-handle{opacity:.8!important;touch-action:none;top:50%;height:calc(46px*var(--inv,1));width:calc(22px*var(--inv,1));background:rgba(20,24,32,.6);color:#fff;border-radius:0 calc(8px*var(--inv,1)) calc(8px*var(--inv,1)) 0;font-size:calc(14px*var(--inv,1))}
 }
 
-/* Fenêtre de recadrage sur écrans bas / étroits */
 @media (max-height:560px){
   .modal-box{max-height:96dvh}
   .crop-container{min-height:0;max-height:none;flex:1 1 auto;height:60dvh}
@@ -451,16 +428,84 @@ button,.pill,.upload-zone,.sec-title{touch-action:manipulation}
   .modal-overlay{padding:8px}
 }
 
-/* ===== Ajustements responsive (suite) ===== */
-/* La carte tient toujours dans l'aperçu : jamais de défilement horizontal */
 .preview-area{overflow-x:hidden}
-/* Barre d'export collante pleine largeur (couvre les marges du panneau) */
+
 .panel .sec:last-child{margin-left:-16px;margin-right:-16px;padding:12px 16px 14px}
-/* Poignées tactiles plus discrètes : jamais plus hautes que 70% du bloc */
+
 @media (hover:none){
   #card .sort-handle{width:calc(16px*var(--inv,1));height:min(calc(40px*var(--inv,1)),70%)}
 }
-/* Tablette en portrait : plus de place pour l'aperçu */
+
 @media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
   .preview-area{height:clamp(300px,53vh,780px);height:clamp(300px,53dvh,780px)}
 }
+
+html{--bg:#e9e6df;--surface:#fbfaf6;--field:#f1eee7;--header:#fbfaf6;--border:#d9d5ca;--accent:#ff4a1c;--text:#1b1915;--muted:#77726a;--hover:#ffe9e2;--radius:14px;--display:'Bricolage Grotesque','Manrope',sans-serif}
+html[data-theme="dark"]{--bg:#0b0c0f;--surface:#15171c;--field:#0f1013;--header:#111318;--border:#272a32;--text:#f2efe8;--muted:#8d909a;--hover:#2b1a15}
+body{font-family:'Manrope',sans-serif;letter-spacing:-.005em}
+
+header{padding:10px 20px;border-bottom:1px solid var(--border);background:var(--header)}
+header h1{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.03em}
+.h-icon{width:36px;height:36px;padding:8px;border-radius:11px;transform:rotate(-6deg);box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 40%,transparent)}
+.theme-btn,.mobile-menu-btn{border-radius:11px;background:var(--bg);border:1px solid var(--border)}
+.mobile-menu-btn{font-weight:700}
+
+.panel{background:var(--bg);counter-reset:sec;padding:12px 14px 0;border-right:1px solid var(--border)}
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;padding:0 14px 14px}
+.sec.closed{padding-bottom:0}
+.sec-title{counter-increment:sec;font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:-.015em;padding:14px 0 8px;gap:10px}
+.sec-title svg{display:none}
+.sec-title::before{content:counter(sec,decimal-leading-zero);font-family:'Manrope',sans-serif;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:6px;padding:3px 6px}
+.sec-title::after{width:8px;height:8px;border-color:var(--muted)}
+.panel .sec:last-child{margin:0 -14px;border:none;border-top:1px solid var(--border);border-radius:0;padding:12px 14px 14px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px)}
+label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:13px}
+
+input[type="text"],textarea,select{background:var(--field);border:1px solid transparent;border-radius:11px;padding:10px 12px;font-weight:500}
+input[type="text"]:hover,textarea:hover,select:hover{border-color:var(--border)}
+input[type="text"]:focus,textarea:focus,select:focus{border-color:var(--accent);background:var(--surface)}
+.pill{background:var(--field);border:1px solid transparent;border-radius:10px;color:var(--text);font-weight:700;padding:8px 14px}
+.pill:hover{border-color:var(--border);color:var(--text)}
+.pill.active{background:var(--text);border-color:var(--text);color:var(--surface)}
+.upload-zone{border:1.5px dashed var(--border);border-radius:14px;background:var(--field)}
+.upload-zone:hover{border-color:var(--accent);background:var(--hover)}
+.upload-zone svg{background:var(--surface);border-radius:10px;padding:5px;width:34px;height:34px}
+.btn-add{border-radius:11px;font-weight:700}
+.btn-sm,.btn-del{border-radius:9px}
+.color-row{border-bottom:1px dashed var(--border);padding:7px 0}
+.clabel{font-weight:600}
+.toggle input:checked+.tslider{background:var(--text)}
+.tslider{background:color-mix(in srgb,var(--muted) 35%,transparent)}
+.btn-dl{font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-.01em;padding:15px;border-radius:14px;background:var(--accent);box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 38%,transparent)}
+.btn-dl:hover{opacity:1;transform:translateY(-1px);box-shadow:0 12px 28px color-mix(in srgb,var(--accent) 48%,transparent)}
+
+.preview-area{background-color:var(--bg);background-image:radial-gradient(color-mix(in srgb,var(--text) 16%,transparent) 1px,transparent 1.3px);background-size:20px 20px}
+.preview-meta{background:var(--surface);border:1px solid var(--border);font-weight:600;font-variant-numeric:tabular-nums}
+#card{box-shadow:0 0 0 1px rgba(0,0,0,.06),0 30px 80px -10px rgba(20,16,10,.38)}
+.modal-box{border-radius:18px}
+.modal-header h3{font-family:var(--display);font-size:17px;font-weight:600}
+.modal-footer .btn-apply{font-family:var(--display);border-radius:11px;background:var(--accent)}
+
+#card{--c-ink:#0f1218;--c-surf:#f1eee8;--c-line:#e3dfd6}
+#card.dark{--c-ink:#05060a;--c-surf:#1d2430}
+.card-header{background:var(--c-ink);border-bottom:0}
+.card-brand{color:#fff;font-size:40px;letter-spacing:.005em}
+.dealer-name{color:rgba(255,255,255,.62);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.14em}
+.card-year{border-radius:4px;transform:translateY(-3px) skewX(-8deg)}
+#cLogoImg{background:#fff;padding:5px 9px;border-radius:9px;box-sizing:content-box}
+.card-img-wrap.has-img::after{height:38%;background:linear-gradient(transparent,rgba(8,10,14,.55))}
+.garantie-badge{border-radius:6px;letter-spacing:.12em;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.saving-badge{background:#fff;color:#0f1218;box-shadow:0 6px 18px rgba(0,0,0,.35);letter-spacing:.02em}
+.saving-badge::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#1e9e4a;margin-right:8px}
+.card-stats{background:var(--c-surf);border-bottom:0}
+.stat{background:transparent;border-right:1px solid var(--c-line)}
+.card-stats .stat:first-child{background:var(--c-bg);box-shadow:inset 0 3px 0 var(--c-ink)}
+.stat-ico{background:var(--c-bg)}
+.card-options{background:var(--c-bg)}
+.opts-grid{gap:9px 12px}
+.opt-item{background:var(--c-surf);border-radius:12px;padding:8px 12px 8px 8px}
+.card-footer{box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.footer-phone{letter-spacing:.04em}
+.sec.closed{padding-bottom:5px}
+
+.panel .sec:last-child{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+.panel .sec:last-child{margin-top:auto}
