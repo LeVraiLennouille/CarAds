@@ -331,3 +331,42 @@ input[type="color"]::-moz-color-swatch{border:none;border-radius:5px}
 .stat-ico svg{stroke-width:1.7}
 .stat-tx svg{width:26px;height:26px}
 #card.landscape .stat-ico{width:30px;height:30px;padding:5px}
+/* ===== Boutons accessibles (pills, pastilles Crit'Air, palette) ===== */
+button.pill,button.critair-swatch,button.preset{appearance:none;-webkit-appearance:none}
+button.pill{font-family:inherit}
+button.preset{display:block}
+.saved-badge.err{color:#e5484d}
+.saved-badge.err svg{display:none}
+
+/* ===== Sections masquées temporairement : retirer la classe "temp-hidden" dans index.html pour les réafficher ===== */
+.sec.temp-hidden{display:none!important}
+
+/* ===== Format Portrait 4:5 (640×800 -> export 1080×1350) ===== */
+#card.portrait{width:640px;height:800px}
+#card.portrait .card-header{padding:14px 20px}
+#card.portrait .card-brand{font-size:30px}
+#card.portrait .card-year{font-size:19px;padding:4px 9px}
+#card.portrait .stat{padding:13px 10px}
+#card.portrait .stat-ico{display:none}
+#card.portrait .stat-val{font-size:20px}
+#card.portrait .card-stats .stat:first-child .stat-val{font-size:23px}
+#card.portrait .stat-tx-text{font-size:15px}
+#card.portrait .card-options{padding:16px 20px 18px}
+#card.portrait .opt-item{font-size:15px}
+#card.portrait .opts-grid{gap:10px 18px}
+#card.portrait .card-footer{padding:12px 20px}
+#card.portrait .footer-phone{font-size:22px}
+
+/* ===== Prix barré + badge d'économie ===== */
+.stat-lbl s{font-size:13px;font-weight:600;text-decoration-thickness:2px}
+.saving-badge{position:absolute;bottom:14px;right:16px;z-index:2;display:none;background:#1e9e4a;color:#fff;font-family:var(--card-heading-font);font-weight:800;font-size:19px;letter-spacing:.03em;text-transform:uppercase;padding:7px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(0,0,0,.35);white-space:nowrap}
+#card.portrait .saving-badge{font-size:17px}
+#card.story .saving-badge{font-size:15px;padding:5px 11px;bottom:12px;right:12px}
+#card.landscape .saving-badge{font-size:15px;padding:5px 11px;bottom:10px;right:12px}
+
+/* ===== Masquage de plaque ===== */
+.plate{position:absolute;display:none;cursor:move;touch-action:none;box-sizing:border-box}
+.plate canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#card:not(.exporting) .plate{outline:2px dashed rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.plate-handle{position:absolute;right:-8px;bottom:-8px;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--accent);cursor:nwse-resize;touch-action:none;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+#card.exporting .plate-handle{display:none}

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CarAds Studio</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
@@ -28,34 +28,35 @@
 <div class="panel-backdrop" id="panelBackdrop" onclick="togglePanel()"></div>
 <div class="workspace">
 <div class="panel" id="panel">
-  <div class="sec">
+  <div class="sec temp-hidden">
     <div class="sec-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
       Format de la carte
     </div>
     <div class="pills-row">
-      <div class="pill format-pill active" data-format="square" onclick="selectFormat('square')"><span class="fmt-ico">⬛</span>Carré 1:1</div>
-      <div class="pill format-pill" data-format="story" onclick="selectFormat('story')"><span class="fmt-ico">📱</span>Story 9:16</div>
-      <div class="pill format-pill" data-format="landscape" onclick="selectFormat('landscape')"><span class="fmt-ico">🖥</span>Paysage 16:9</div>
+      <button type="button" class="pill format-pill active" data-format="square" onclick="selectFormat('square')"><span class="fmt-ico">⬛</span>Carré 1:1</button>
+      <button type="button" class="pill format-pill" data-format="portrait" onclick="selectFormat('portrait')"><span class="fmt-ico">▮</span>Portrait 4:5</button>
+      <button type="button" class="pill format-pill" data-format="story" onclick="selectFormat('story')"><span class="fmt-ico">📱</span>Story 9:16</button>
+      <button type="button" class="pill format-pill" data-format="landscape" onclick="selectFormat('landscape')"><span class="fmt-ico">🖥</span>Paysage 16:9</button>
     </div>
   </div>
-  <div class="sec">
+  <div class="sec temp-hidden">
     <div class="sec-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
       Typographie
     </div>
     <div class="pills-row">
-      <div class="pill font-pill active" data-font="sport" onclick="selectFont('sport')">Sport</div>
-      <!-- <div class="pill font-pill" data-font="luxe" onclick="selectFont('luxe')">Luxe</div>
-      <div class="pill font-pill" data-font="modern" onclick="selectFont('modern')">Modern</div> -->
-      <div class="pill font-pill" data-font="compact" onclick="selectFont('compact')">Compact</div>
+      <button type="button" class="pill font-pill active" data-font="sport" onclick="selectFont('sport')">Sport</button>
+      <button type="button" class="pill font-pill" data-font="luxe" onclick="selectFont('luxe')">Luxe</button>
+      <button type="button" class="pill font-pill" data-font="modern" onclick="selectFont('modern')">Modern</button>
+      <button type="button" class="pill font-pill" data-font="compact" onclick="selectFont('compact')">Compact</button>
     </div>
   </div>
   <div class="sec">
     <div class="sec-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Logo concessionnaire
     </div>
-    <div class="upload-zone" id="logoZone" onclick="document.getElementById('logoInput').click()">
+    <div class="upload-zone" id="logoZone" role="button" tabindex="0" onclick="document.getElementById('logoInput').click()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
       <p>Importer logo (JPG, PNG, SVG)</p>
     </div>
@@ -64,18 +65,18 @@
       <img id="logoPreviewImg" src="" alt="Logo">
       <button class="btn-sm" onclick="clearLogo()">Supprimer</button>
     </div>
-    <div class="saved-badge" id="savedBadge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sauvegardé
+    <div class="saved-badge" id="savedBadge" role="status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="savedText">Sauvegardé</span>
     </div>
     <label>Nom du garage</label>
-    <input type="text" id="dealer" value="Nom du garage" oninput="updateCard();saveSettings()">
+    <input type="text" id="dealer" placeholder="Nom du garage" oninput="updateCard();saveSettings()">
   </div>
   <div class="sec">
     <div class="sec-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
       Photo du véhicule
     </div>
-    <div class="upload-zone" id="vehicleZone" onclick="document.getElementById('vehicleInput').click()">
+    <div class="upload-zone" id="vehicleZone" role="button" tabindex="0" onclick="document.getElementById('vehicleInput').click()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
       <p>Cliquez ou déposez une image ici</p>
     </div>
@@ -87,6 +88,24 @@
         Recadrer
       </button>
     </div>
+    <div class="toggle-row" style="margin-top:10px">
+      <span class="clabel">Masquer la plaque</span>
+      <label class="toggle"><input type="checkbox" id="showPlate" onchange="updateCard()"><span class="tslider"></span></label>
+    </div>
+    <div id="plateFields" style="display:none">
+      <label>Style</label>
+      <select id="plateStyle" onchange="updateCard()">
+        <option value="blur">Flou</option>
+        <option value="pixel">Pixels</option>
+        <option value="solid">Aplat</option>
+      </select>
+      <div class="color-row" id="plateColorRow" style="margin-top:8px;display:none">
+        <span class="clabel">Couleur de l'aplat</span>
+        <input type="color" id="plateColor" value="#1a1a1a" oninput="updateCard()">
+      </div>
+      <p class="subtext">Faites glisser le rectangle sur la plaque, tirez le coin pour l'agrandir.</p>
+      <button type="button" class="btn-sm" style="margin-top:6px" onclick="resetPlate()">Replacer le rectangle</button>
+    </div>
   </div>
   <div class="sec">
     <div class="sec-title">
@@ -94,39 +113,39 @@
       Informations véhicule
     </div>
     <label>Marque &amp; Modèle</label>
-    <input type="text" id="brand" value="NOM du véhicule" oninput="updateCard()">
+    <input type="text" id="brand" placeholder="NOM du véhicule" oninput="updateCard()">
     <label>Année</label>
-    <input type="text" id="year" value="année" oninput="updateCard()">
+    <input type="text" id="year" placeholder="année" oninput="updateCard()">
     <label>Puissance</label>
-    <input type="text" id="power" value="xxx ch" oninput="updateCard()">
+    <input type="text" id="power" placeholder="xxx ch" oninput="updateCard()">
     <label>Kilométrage (km)</label>
-    <input type="text" id="mileage" value="xx.xxx" oninput="updateCard()">
+    <input type="text" id="mileage" placeholder="xx.xxx" oninput="updateCard()">
     <label>Boîte de vitesses</label>
-    <textarea id="transmission" oninput="updateCard()">AUTOMATIQUE 8 RAPPORTS</textarea>
+    <textarea id="transmission" placeholder="AUTOMATIQUE 8 RAPPORTS" oninput="updateCard()"></textarea>
     <label>Énergie</label>
     <div class="pills-row">
-      <div class="pill fuel-pill" data-fuel="diesel" onclick="selectFuel('diesel')">
+      <button type="button" class="pill fuel-pill" data-fuel="diesel" onclick="selectFuel('diesel')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V6a2 2 0 012-2h8a2 2 0 012 2v16M3 22h14M7 22V12h4v10"/><path d="M17 4h1a2 2 0 012 2v3.5a1.5 1.5 0 003 0V7l-2-3"/></svg>Diesel
-      </div>
-      <div class="pill fuel-pill" data-fuel="essence" onclick="selectFuel('essence')">
+      </button>
+      <button type="button" class="pill fuel-pill" data-fuel="essence" onclick="selectFuel('essence')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V6a2 2 0 012-2h8a2 2 0 012 2v16M3 22h14M7 22V12h4v10"/><path d="M17 4h1a2 2 0 012 2v3.5a1.5 1.5 0 003 0V7l-2-3"/></svg>Essence
-      </div>
-      <div class="pill fuel-pill" data-fuel="hybride" onclick="selectFuel('hybride')">
+      </button>
+      <button type="button" class="pill fuel-pill" data-fuel="hybride" onclick="selectFuel('hybride')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Hybride
-      </div>
-      <div class="pill fuel-pill" data-fuel="electrique" onclick="selectFuel('electrique')">
+      </button>
+      <button type="button" class="pill fuel-pill" data-fuel="electrique" onclick="selectFuel('electrique')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Électrique
-      </div>
+      </button>
     </div>
     <label>Crit'Air</label>
     <div class="critair-swatches">
-      <div class="critair-swatch" data-critair="none" style="background:#444;font-size:10px" onclick="selectCritair('none')">–</div>
-      <div class="critair-swatch active" data-critair="E" style="background:#1e9e4a" onclick="selectCritair('E')">E</div>
-      <div class="critair-swatch" data-critair="1" style="background:#7b3f9e" onclick="selectCritair('1')">1</div>
-      <div class="critair-swatch" data-critair="2" style="background:#e0b400" onclick="selectCritair('2')">2</div>
-      <div class="critair-swatch" data-critair="3" style="background:#e67e22" onclick="selectCritair('3')">3</div>
-      <div class="critair-swatch" data-critair="4" style="background:#8e2430" onclick="selectCritair('4')">4</div>
-      <div class="critair-swatch" data-critair="5" style="background:#6b7580" onclick="selectCritair('5')">5</div>
+      <button type="button" class="critair-swatch" data-critair="none" style="background:#444;font-size:10px" onclick="selectCritair('none')">–</button>
+      <button type="button" class="critair-swatch active" data-critair="E" style="background:#1e9e4a" onclick="selectCritair('E')">E</button>
+      <button type="button" class="critair-swatch" data-critair="1" style="background:#7b3f9e" onclick="selectCritair('1')">1</button>
+      <button type="button" class="critair-swatch" data-critair="2" style="background:#e0b400" onclick="selectCritair('2')">2</button>
+      <button type="button" class="critair-swatch" data-critair="3" style="background:#e67e22" onclick="selectCritair('3')">3</button>
+      <button type="button" class="critair-swatch" data-critair="4" style="background:#8e2430" onclick="selectCritair('4')">4</button>
+      <button type="button" class="critair-swatch" data-critair="5" style="background:#6b7580" onclick="selectCritair('5')">5</button>
     </div>
     <label>Émissions CO₂ (g/km) <span style="font-weight:400;text-transform:none">— optionnel</span></label>
     <input type="text" id="co2" value="" placeholder="Ex: 118 g/km" oninput="updateCard()">
@@ -137,16 +156,22 @@
       Prix &amp; Financement
     </div>
     <label>Prix affiché</label>
-    <input type="text" id="price" value="xx.xxx €" oninput="updateCard()">
+    <input type="text" id="price" placeholder="xx.xxx €" oninput="updateCard()">
+    <label>Ancien prix <span style="font-weight:400">— optionnel, affiché barré</span></label>
+    <input type="text" id="oldPrice" placeholder="26 490 €" oninput="updateCard()">
+    <div class="toggle-row" style="margin-top:6px">
+      <span class="clabel">Afficher « Économisez … » sur la photo</span>
+      <label class="toggle"><input type="checkbox" id="showSaving" checked onchange="updateCard()"><span class="tslider"></span></label>
+    </div>
     <div class="toggle-row" style="margin-top:10px">
       <span class="clabel">Afficher le financement LOA/LLD</span>
       <label class="toggle"><input type="checkbox" id="showFin" onchange="updateCard()"><span class="tslider"></span></label>
     </div>
     <div id="finFields" style="display:none">
       <label>Mensualité</label>
-      <input type="text" id="finAmount" value="À partir de 399 €/mois" oninput="updateCard()">
+      <input type="text" id="finAmount" placeholder="À partir de 399 €/mois" oninput="updateCard()">
       <label>Mentions légales</label>
-      <input type="text" id="finLegal" value="Sous réserve d'acceptation. Apport 3 000€. Durée 48 mois." oninput="updateCard()">
+      <input type="text" id="finLegal" placeholder="Sous réserve d'acceptation. Apport 3 000€. Durée 48 mois." oninput="updateCard()">
       <label>Couleur bandeau financement</label>
       <div class="cright" style="margin-top:5px">
         <div class="presets">
@@ -210,9 +235,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Concessionnaire
     </div>
     <label>Téléphone</label>
-    <input type="text" id="phone" value="03 XX XX XX XX" oninput="updateCard();saveSettings()">
+    <input type="text" id="phone" placeholder="03 XX XX XX XX" oninput="updateCard();saveSettings()">
     <label>Adresse</label>
-    <input type="text" id="address" value="Adresse de la concessionnaire" oninput="updateCard();saveSettings()">
+    <input type="text" id="address" placeholder="Adresse de la concessionnaire" oninput="updateCard();saveSettings()">
   </div>
   <div class="sec">
     <div class="sec-title">
@@ -288,11 +313,8 @@
     <div class="sec-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exporter
     </div>
-    <button class="btn-dl" id="dlBtn" onclick="downloadCard('jpg')">
+    <button class="btn-dl" id="dlBtn" onclick="downloadCard()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:15px;height:15px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Télécharger JPG
-    </button>
-    <button class="btn-dl secondary" id="dlBtnPng" onclick="downloadCard('png')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:15px;height:15px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Télécharger PNG (transparent)
     </button>
   </div>
 </div>
@@ -318,12 +340,17 @@
           <span>Importez une photo du véhicule</span>
         </div>
         <img id="cardImg" src="" alt="vehicle">
+        <div class="plate" id="cPlate" title="Glisser pour déplacer, tirer le coin pour redimensionner">
+          <canvas id="cPlateCanvas"></canvas>
+          <div class="plate-handle" id="cPlateHandle"></div>
+        </div>
         <div class="garantie-badge" id="cGarantieBadge">Garantie 12 mois</div>
         <div class="critair-badge" id="cCritairBadge"></div>
         <div class="co2-badge" id="cCo2Badge">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:10px;height:10px"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 7a4 4 0 110 8"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
           <span id="cCo2Text"></span>
         </div>
+        <div class="saving-badge" id="cSavingBadge"></div>
         <div class="badge-wrap" id="cBadgeWrap">
           <div class="badge-inner" id="cBadgeInner" style="background:#ee3524">D'occasion</div>
         </div>
@@ -337,7 +364,7 @@
       <div class="card-stats" id="cStatsSection">
         <div class="stat">
           <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8.2a5 5 0 1 0 0 7.6M6.5 10.8h7M6.5 13.2h7"/></svg></div>
-          <div><div class="stat-val" id="cPrice">33.490 €</div><div class="stat-lbl">Prix</div></div>
+          <div><div class="stat-val" id="cPrice">33.490 €</div><div class="stat-lbl" id="cPriceLbl">Prix</div></div>
         </div>
         <div class="stat">
           <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1"/></svg></div>
@@ -367,11 +394,11 @@
     <div class="card-footer" id="cFooterBar" style="background:#ee3524">
       <div>
         <div class="footer-lbl">Plus d'info au</div>
-        <div class="footer-phone" id="cPhone">03 23 39 12 55</div>
+        <div class="footer-phone" id="cPhone">03 XX XX XX XX</div>
       </div>
       <div class="footer-right">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <div class="footer-addr" id="cAddress">Route de Chauny 02700 Condren</div>
+        <div class="footer-addr" id="cAddress">Adresse de la concessionnaire</div>
       </div>
     </div>
   </div>
